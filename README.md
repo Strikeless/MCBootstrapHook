@@ -15,7 +15,7 @@ public class BootstrapHookPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // BootstrapHook uses a builder design in order to create an instance.
+        // BootstrapHook uses a builder design to create instances.
         bootstrapHook = BootstrapHook.builder()
                 .channelInitializerName("ExampleInitializer")
                 .channelInitializer(new ChannelInitializer<Channel>() {
@@ -56,4 +56,4 @@ public class BootstrapHookPlugin extends JavaPlugin {
     }
 }
 ```
-It may look daunting at first, but in the end it's rather simple and 
+It may look daunting at first, but in the end it's rather simple and can be split into a few classes if needed to.
