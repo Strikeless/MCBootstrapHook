@@ -9,8 +9,12 @@ MCBootstrapHook or simply BootstrapHook helps Spigot plugins inject a Netty Chan
 This allows you to get a hold of the Netty pipeline at a very early stage, which in turn allows you to manage packet traffic sent by and/or to the client.
 BootstrapHook also focuses on being a rather simple utility, which in turn allows great flexibility and performance.
 
+## What is it not?
+* A packet system, MCBootstrapHook is a utility that can be used to make a packet system. If you're looking for a packet system, consider [PacketEvents](https://github.com/retrooper/packetevents) (unrelated to MCBootstrapHook).
+* An intended standalone plugin, while MCBootstrapHook can work as one, it won't have a use.
+
 ## How to use it?
-Here's a simple Spigot plugin example written in Java:
+The API can be gotten from [JitPack](https://jitpack.io/#Strikeless/MCBootstrapHook), and here's a simple Spigot/Bukkit plugin example written in Java:
 ```Java
 public class BootstrapHookPlugin extends JavaPlugin {
     
@@ -60,3 +64,8 @@ public class BootstrapHookPlugin extends JavaPlugin {
 }
 ```
 It may look daunting at first, but in the end it's rather simple and can be split into a few classes if needed to.
+
+## License
+MCBootstrapHook is currently licensed under GPLv3 due to it depending on Bukkit's API. If the API stops depending on Bukkit's API in the future, the license may be changed to one that's even more free, as long as it is compliant with Netty's license.
+
+![GPLv3 logo](https://www.gnu.org/graphics/gplv3-127x51.png)
