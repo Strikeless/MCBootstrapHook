@@ -52,7 +52,7 @@ public class BootstrapHook {
     private static boolean injectedAcceptors;
 
     /**
-     * A {@link ChannelInitializer<Channel>} that will be hooked to the bootstrap upon initialization.
+     * The {@link ChannelInitializer<Channel>} that will be injected to the bootstrap upon initialization.
      */
     @NonNull
     private final ChannelInitializer<Channel> channelInitializer;

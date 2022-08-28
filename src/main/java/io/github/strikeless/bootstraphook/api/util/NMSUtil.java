@@ -28,7 +28,6 @@
 package io.github.strikeless.bootstraphook.api.util;
 
 import io.netty.channel.ChannelFuture;
-import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 
@@ -45,25 +44,46 @@ import java.util.List;
 public class NMSUtil {
 
     /**
-     * Returns the name of the package used by NMS
+     * The package name used by CraftBukkit
      */
-    public String getNMSPackage() {
-        return Bukkit.getServer().getClass().getPackage().getName()
-                .replace("org.bukkit.craftbukkit", "net.minecraft.server");
-    }
+    public static final String OBC_PACKAGE = Bukkit.getServer().getClass().getPackage().getName();
 
     /**
-     * Returns a concentration of NMS's package name and the given string
+     * The version string used by CraftBukkit
      */
-    public String getNMSClassName(final String name) {
-        return getNMSPackage() + "." + name;
+    public static final String OBC_VERSION_STRING = OBC_PACKAGE.split("\\.")[3];
+
+    /**
+     * Whether to use class names found in minor server versions 17 and above.
+     */
+    // Minor server versions 17 and above do not contain the version string in the NMS package,
+    // however the OBC package is still providing us a version string, thus we need the integer check.
+    // The isEmpty check is just there for potential future-proofing.
+    public static final boolean USE_MODERN_NMS_NAMES = OBC_VERSION_STRING.isEmpty()
+            || Integer.parseInt(OBC_VERSION_STRING.split("_")[1]) >= 17;
+
+    /**
+     * The package name used by NMS. Note that this will not work in case the package name has been changed by
+     * fork obfuscation or such. This also relies on OBC's version string.
+     */
+    // "Modern" versions do not contain the version string in the NMS package.
+    public static final String NMS_PACKAGE = "net.minecraft.server"
+            + (USE_MODERN_NMS_NAMES ? "" : "." + OBC_VERSION_STRING);
+
+    /**
+     * Tries to find and returns a class of NMS with the given name.
+     * @param legacyName The class name used for server versions below 1.17
+     * @param modernName The class name/path used for server versions above 1.17
+     */
+    public Class<?> getNMSClass(final String legacyName, final String modernName) throws ClassNotFoundException {
+        return Class.forName(NMS_PACKAGE + "." + (USE_MODERN_NMS_NAMES ? modernName : legacyName));
     }
 
     /**
      * Tries to find and returns the NMS server instance.
      */
     public Object getServerInstance() throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
-        final Class<?> klass = Class.forName(getNMSClassName("MinecraftServer"));
+        final Class<?> klass = getNMSClass("MinecraftServer", "MinecraftServer");
         final Field field = ReflectiveUtil.getFieldByType(klass, klass);
         return ReflectiveUtil.getFieldValue(null, field);
     }
@@ -73,15 +93,14 @@ public class NMSUtil {
      *
      * @param server The NMS server
      */
-    public List<ChannelFuture> getServerChannelFutures(final Object server) throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException {
-        // On newer server versions, the ServerConnection class is located in a network package, thus we cannot simply
-        // use Class.forName() alongside ReflectiveUtil.getFieldByType(). We could technically check the server version
-        // and get the class's path based on that, but this'll do.
-        final Field serverConnectionField = ReflectiveUtil.getFieldByTypeSuffix(server, "ServerConnection");
+    public List<ChannelFuture> getServerChannelFutures(final Object server)
+            throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException {
+        final Class<?> serverConnectionClass = getNMSClass("ServerConnection", "network.ServerConnection");
+        final Field serverConnectionField = ReflectiveUtil.getFieldByType(server, serverConnectionClass);
         final Object serverConnection = ReflectiveUtil.getFieldValue(server, serverConnectionField);
 
         // Get the list of ChannelFutures in the ServerConnection instance.
-        // We'll just assume that the list we want is the first list in the class.
+        // For now, we'll just assume that the list we want is the first list in the class.
         final Field channelFuturesField = ReflectiveUtil.getFieldByType(serverConnection, List.class);
         return ReflectiveUtil.getFieldValue(serverConnection, channelFuturesField);
     }

@@ -28,7 +28,7 @@
 package io.github.strikeless.bootstraphook.api;
 
 /**
- * An exception thrown by a failed attempt at hooking to, or unhooking from, the server's bootstrap.
+ * An exception thrown by a failed attempt at injecting to the server's bootstrap.
  *
  * @author Strikeless
  * @since 04.08.2022

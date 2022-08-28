@@ -1,2 +1,6 @@
 # Project exclude paths
 /target/
+
+# Jetbrains IDE files
+*.iml
+.idea

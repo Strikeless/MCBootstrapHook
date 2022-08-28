@@ -41,24 +41,12 @@ import java.util.Arrays;
 @UtilityClass
 public class ReflectiveUtil {
 
-    public Field getFieldByName(final Object object, final String fieldName) throws NoSuchFieldException {
-        return getInheritedDeclaredField(getClassFromObject(object), fieldName);
-    }
-
     public Field getFieldByType(final Object object, final Class<?> type) throws NoSuchFieldException {
         for (final Field field : getInheritedDeclaredFields(getClassFromObject(object))) {
             if (type.isAssignableFrom(field.getType())) return field;
         }
 
         throw new NoSuchFieldException("Type: " + type.getName());
-    }
-
-    public Field getFieldByTypeSuffix(final Object object, final String suffix) throws NoSuchFieldException {
-        for (final Field field : getInheritedDeclaredFields(getClassFromObject(object))) {
-            if (field.getType().getName().endsWith(suffix)) return field;
-        }
-
-        throw new NoSuchFieldException("Type suffix: " + suffix);
     }
 
     @SuppressWarnings("unchecked")
@@ -70,19 +58,6 @@ public class ReflectiveUtil {
     private Class<?> getClassFromObject(final Object object) {
         if (object instanceof Class<?>) return (Class<?>) object;
         return object.getClass();
-    }
-
-    private Field getInheritedDeclaredField(final Class<?> klass, final String name) throws NoSuchFieldException {
-        try {
-            // Try to find the field from the provided class
-            return klass.getDeclaredField(name);
-        } catch (final NoSuchFieldException ex) {
-            // Check if we can't recurse any further
-            if (klass.equals(Object.class)) throw new NoSuchFieldException(name);
-
-            // Try to find the same field from the class's superclass with recursion
-            return getInheritedDeclaredField(klass.getSuperclass(), name);
-        }
     }
 
     private Field[] getInheritedDeclaredFields(final Class<?> klass) {

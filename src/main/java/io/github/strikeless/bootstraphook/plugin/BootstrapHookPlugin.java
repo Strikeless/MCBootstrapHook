@@ -28,8 +28,6 @@
 package io.github.strikeless.bootstraphook.plugin;
 
 import io.github.strikeless.bootstraphook.api.BootstrapHook;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -42,23 +40,13 @@ public class BootstrapHookPlugin extends JavaPlugin implements Listener {
     @Override
     public void onLoad() {
         try {
-            // Inject the acceptors here so that we can handle exceptions and that dependants won't have to.
+            // Inject the acceptors here so that we can handle exceptions and
+            // that dependants won't have to worry about failure.
             BootstrapHook.injectAcceptors();
 
             this.getLogger().info(
                     this.getDescription().getName() + " " + this.getDescription().getVersion() + " loaded."
             );
-
-            BootstrapHook.builder()
-                    .channelInitializerName("TestingInitializer")
-                    .channelInitializer(new ChannelInitializer<Channel>() {
-                        @Override
-                        protected void initChannel(Channel ch) throws Exception {
-                            System.out.println("Initialized channel " + String.join(", ", ch.pipeline().names()));
-                        }
-                    })
-                    .build()
-                    .inject();
         } catch (final Exception ex) {
             this.getLogger().severe("Failed to inject acceptors!");
             ex.printStackTrace();
