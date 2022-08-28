@@ -1,5 +1,5 @@
 name: BootstrapHook
-version: 0.1.0
+version: 1.0.0
 main: io.github.strikeless.bootstraphook.plugin.BootstrapHookPlugin
 description: Inject to a Minecraft server's Netty bootstrap with ease
 prefix: BootstrapHook
