@@ -1,5 +1,8 @@
+[![Jitpack Release](https://jitpack.io/v/Strikeless/MCBootstrapHook.svg)](https://jitpack.io/#Strikeless/MCBootstrapHook)
+![Supported Versions](https://img.shields.io/badge/Supported%20Versions-1.8--1.19-blue)
+
 # MCBootstrapHook
-Inject to a Minecraft server's Netty bootstrap with ease
+Inject to a Minecraft server's Netty bootstrap with ease. Works on all versions from 1.8 to 1.19!
 
 ## What is it?
 MCBootstrapHook or simply BootstrapHook helps Spigot plugins inject a Netty ChannelInitializer to a client's pipeline almost instantly upon connecting.
